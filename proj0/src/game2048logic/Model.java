@@ -6,7 +6,6 @@ import game2048rendering.Tile;
 
 import java.util.Formatter;
 
-
 /** The state of a game of 2048.
  *  @author P. N. Hilfinger + Josh Hug
  */
@@ -158,11 +157,35 @@ public class Model {
      *    and the trailing tile does not.
      */
     public void moveTileUpAsFarAsPossible(int x, int y) {
-        Tile currTile = board.tile(x, y);
+        Tile currTile = board.tile(x, y), toMergeTile = null;
+        // curr is not null
         int myValue = currTile.value();
         int targetY = y;
 
         // TODO: Tasks 5, 6, and 10. Fill in this function.
+        int length = board.size();
+
+        for (targetY++ ; targetY < length; targetY++) {
+            toMergeTile = board.tile(x, targetY);
+            if (toMergeTile != null) {
+                break;
+            }
+        }
+
+        // no tile upper
+        if (targetY == length) {
+            if (y != length - 1) {
+                board.move(x, length - 1, currTile);
+            }
+        // tile in upper and can merge
+        } else if ((toMergeTile.wasMerged() == false) && (toMergeTile.value() == myValue)){
+            board.move(x, targetY, currTile);
+            score += (2 * myValue);
+        // tile in upper and can't merge, and need to move
+        } else if (targetY - 1 > y){
+            board.move(x, targetY - 1, currTile);
+        }
+        // tile in upper and can't merge, and don't need to move
     }
 
     /** Handles the movements of the tilt in column x of board B
@@ -172,10 +195,22 @@ public class Model {
      * */
     public void tiltColumn(int x) {
         // TODO: Task 7. Fill in this function.
+        int length = board.size();
+        for (int i = length - 1; i >= 0; i--) {
+            if (board.tile(x, i) != null) {
+                this.moveTileUpAsFarAsPossible(x, i);
+            }
+        }
     }
 
     public void tilt(Side side) {
         // TODO: Tasks 8 and 9. Fill in this function.
+        int length = board.size();
+        board.setViewingPerspective(side);
+        for (int i = 0; i < length; i++) {
+            this.tiltColumn(i);
+        }
+        board.setViewingPerspective(Side.NORTH);
     }
 
     /** Tilts every column of the board toward SIDE.
