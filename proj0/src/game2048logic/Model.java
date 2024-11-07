@@ -86,6 +86,14 @@ public class Model {
      * */
     public boolean emptySpaceExists() {
         // TODO: Task 1. Fill in this function.
+        int length = board.size();
+        for (int i = 0; i < length; i ++) {
+            for (int j = 0; j < length; j ++) {
+                if (board.tile(i, j) == null) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -96,6 +104,14 @@ public class Model {
      */
     public boolean maxTileExists() {
         // TODO: Task 2. Fill in this function.
+        int length = board.size();
+        for (int i = 0; i < length; i ++) {
+            for (int j = 0; j < length; j ++) {
+                if ((board.tile(i, j) != null) && (board.tile(i, j).value() >= MAX_PIECE)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -107,6 +123,23 @@ public class Model {
      */
     public boolean atLeastOneMoveExists() {
         // TODO: Task 3. Fill in this function.
+        if (this.emptySpaceExists() == true) {
+            return true;
+        }
+        // all space contain value
+        int length = board.size();
+        int val;
+        for (int i = 0; i < length; i ++) {
+            for (int j = 0; j < length; j ++) {
+                val = board.tile(i, j).value();
+                if ((i + 1 < length) && (val == board.tile(i + 1, j).value())) {
+                    return true;
+                }
+                if ((j + 1 < length) && (val == board.tile(i, j + 1).value())) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
